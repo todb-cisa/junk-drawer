@@ -8,16 +8,16 @@ require 'optparse'
 def parse_options
   options = {}
   OptionParser.new do |opts|
-    opts.on('--since DATE', 'Display vulnerabilities since this date (format: YYYY-MM-DD)') do |date|
+    opts.on('--since DATE', 'Display vulnerabilities since this date (format: YYYY-MM-DD) (default: last Friday)') do |date|
       options[:since] = Date.parse(date)
-    end
-
-    opts.on('--added', 'Show the added date instead of the due date') do
-      options[:added] = true
     end
 
     opts.on('--due', 'Show the due date (default behavior)') do
       options[:due] = true
+    end
+
+    opts.on('--added', 'Show the added date instead of the due date') do
+      options[:added] = true
     end
 
     opts.on('-h', '--help', 'Show this message') do
