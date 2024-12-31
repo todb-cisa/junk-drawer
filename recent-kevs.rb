@@ -72,7 +72,7 @@ end
 def print_kevs(recent_vulns, options)
   recent_vulns.each do |vuln|
     cve_id = vuln['cveID']
-    vuln_name = vuln["vulnerabilityName"].sub(/ Vulnerability\z/, '')
+    vuln_name = vuln["vulnerabilityName"].sub(/ Vulnerability\s*/, '')
     added_date = vuln['dateAdded']
     due_date = vuln['dueDate']
 
