@@ -4,20 +4,21 @@ require 'net/http'
 require 'json'
 require 'date'
 require 'optparse'
+require 'base64'
 
 def parse_options
   options = {}
   OptionParser.new do |opts|
-    opts.on('--since DATE', 'Display vulnerabilities since this date (format: YYYY-MM-DD) (default: last Friday)') do |date|
+    opts.on('--since DATE', 'Display vulnerabilities since this date (format: YYYY-MM-DD)') do |date|
       options[:since] = Date.parse(date)
-    end
-
-    opts.on('--due', 'Show the due date (default behavior)') do
-      options[:due] = true
     end
 
     opts.on('--added', 'Show the added date instead of the due date') do
       options[:added] = true
+    end
+
+    opts.on('--due', 'Show the due date (default behavior)') do
+      options[:due] = true
     end
 
     opts.on('-h', '--help', 'Show this message') do
@@ -28,7 +29,7 @@ def parse_options
   options
 end
 
-options = parse_options()
+options = parse_options
 
 since_date = options[:since] || (Date.today - (Date.today.wday + 2) % 7)
 since_day = since_date.strftime("%A")
@@ -50,7 +51,22 @@ def print_status_line(since_date, recent_vulns)
   kev_count = recent_vulns.size
   kev_label = kev_count == 1 ? 'KEV' : 'KEVs'
   since_day = since_date.strftime("%A")
-  puts "[*] Displaying #{kev_count} #{kev_label} since #{since_date} (#{since_day})"
+
+  if kev_count == 0
+    if since_date > Date.today
+      time_error_message = 'ICAgICAgICAgICAgICAgICAgICDwn5qo8J+aqPCfmqjwn5qoCiAgICBBTEVSVDogVW5hdXRob3JpemVkIHRp' +
+        'bWUgdHJhdmVsIGRldGVjdGVkLgogICAgVGhpcyBpbmNpZGVudCBoYXMgYmVlbiAvIHdpbGwgYmUgcmVwb3J0ZWQgdG8KICAgIHRoZSB' +
+        'Ccm93biAmIE1jRmx5IFRlbXBvcmFsIENvbnRyb2wgQWdlbmN5CiAgICAgICAgICAgKGVzdGFibGlzaGVkIE5vdiA1LCAxOTU1KQogIC' +
+        'AgICAgICAgICAgICAgICAgIPCfmpfwn5Sl8J+UpfCflKUK'
+      puts Base64.decode64(time_error_message)
+    else
+      puts "[*] No KEVs added since #{since_date} (#{since_day})"
+    end
+  else
+    puts "[*] Displaying #{kev_count} #{kev_label} since #{since_date} (#{since_day})"
+  end
+
+
 end
 
 def print_kevs(recent_vulns, options)
