@@ -7,10 +7,11 @@ require 'optparse'
 require 'base64'
 
 def parse_options
-  options = {}
+  options = { fresh: true}
   OptionParser.new do |opts|
     opts.on('--since DATE', 'Display vulnerabilities since this date (format: YYYY-MM-DD)') do |date|
       options[:since] = Date.parse(date)
+      options[:fresh] = false
     end
 
     opts.on('--added', 'Show the added date instead of the due date') do
@@ -21,7 +22,7 @@ def parse_options
       options[:due] = true
     end
 
-    opts.on('--fresh', 'Display entries with due dates today or in the future') do
+    opts.on('--fresh', 'Display entries with due dates today or in the future (default behavior)') do
       options[:fresh] = true
     end
 
